@@ -62,28 +62,30 @@ if __name__ == '__main__':
         if not os.path.exists(current_output_path):
             os.mkdir(current_output_path)
         
-        # for pair in itertools.product(['e', 'h', 't'], map(str, range(1, 6))):
-        #     # Read patches from disk.
-        #     patches_path = os.path.join(args.dataset_path, sequence, pair[0] + pair[1] + '.png')
-        #     patches = cv2.imread(patches_path)
-        #     patches = np.reshape(patches, (-1, 65, 65, 3))
+        # Easy / Hard / Tough patches.
+        for pair in itertools.product(['e', 'h', 't'], map(str, range(1, 6))):
+            # Read patches from disk.
+            patches_path = os.path.join(args.dataset_path, sequence, pair[0] + pair[1] + '.png')
+            patches = cv2.imread(patches_path)
+            patches = np.reshape(patches, (-1, 65, 65, 3))
             
-        #     # Extract descriptors.
-        #     descriptors = np.zeros((len(patches), 128), dtype=np.float32)
-        #     for i in range(0, len(patches), args.batch_size):
-        #         data_a = patches[i : i + args.batch_size]
-        #         data_a = torch.stack(
-        #             [transforms(patch) for patch in data_a]
-        #         )
-        #         # Predict
-        #         out_a = SIFT(data_a)
-        #         descriptors[i : i + args.batch_size] = out_a.cpu().detach().numpy()
+            # Extract descriptors.
+            descriptors = np.zeros((len(patches), 128), dtype=np.float32)
+            for i in range(0, len(patches), args.batch_size):
+                data_a = patches[i : i + args.batch_size]
+                data_a = torch.stack(
+                    [transforms(patch) for patch in data_a]
+                )
+                # Predict
+                out_a = SIFT(data_a)
+                descriptors[i : i + args.batch_size] = out_a.cpu().detach().numpy()
             
-        #     # Save descriptors to disk.
-        #     with open(os.path.join(current_output_path, pair[0] + pair[1] + '.csv'), 'w') as f:
-        #         for idx in range(descriptors.shape[0]):
-        #             f.write(';'.join(map(str, descriptors[idx])) + '\n')
+            # Save descriptors to disk.
+            with open(os.path.join(current_output_path, pair[0] + pair[1] + '.csv'), 'w') as f:
+                for idx in range(descriptors.shape[0]):
+                    f.write(';'.join(map(str, descriptors[idx])) + '\n')
 
+        # Reference patches.
         # Read patches from disk.
         patches_path = os.path.join(args.dataset_path, sequence, 'ref.png')
         patches = cv2.imread(patches_path)
